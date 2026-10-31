@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block title %}Tổng quan{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}" defer></script><script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>{% endblock %}
+{% block content %}
+<header class="page-heading"><div><p class="eyebrow">TOÀN BỘ HOẠT ĐỘNG</p><h1>Tổng quan công việc</h1><p class="text-secondary mb-0">Theo dõi tiến độ các dự án và tình hình thực hiện công việc.</p></div><a class="btn btn-primary" href="{{ url_for('web.projects') }}">Xem dự án →</a></header>
+<div class="stats-grid">
+ {% for key,label,style in [('total_projects','Tổng dự án',''),('total_tasks','Tổng công việc',''),('not_started_tasks','Chưa làm','muted'),('in_progress_tasks','Đang làm','working'),('completed_tasks','Hoàn thành','done')] %}<section class="stat-card {{ style }}"><p>{{ label }}</p><strong>{{ summary[key] }}</strong><span>{{ 'dự án' if key == 'total_projects' else 'công việc' }}</span></section>{% endfor %}
+</div>
+<div class="row g-4 mt-1">
+ <div class="col-lg-8"><section class="panel h-100"><h2>Tiến độ dự án</h2><p class="text-secondary small">Phần trăm hoàn thành trung bình của các công việc.</p>{% if chart.names %}<div class="chart-box"><canvas id="project-chart" role="img" aria-label="Biểu đồ cột tiến độ dự án"></canvas></div><details class="mt-3"><summary>Dữ liệu biểu đồ</summary><ul>{% for name in chart.names %}<li>{{ name }}: {{ '%g'|format(chart.progress[loop.index0]) }}%</li>{% endfor %}</ul></details>{% else %}<div class="empty-state">Chưa có dữ liệu</div>{% endif %}</section></div>
+ <div class="col-lg-4"><section class="panel h-100"><h2>Trạng thái công việc</h2><p class="text-secondary small">Tỷ lệ trên tổng số công việc hiện có.</p>{% if summary.total_tasks %}<div class="chart-box"><canvas id="task-chart" role="img" aria-label="Biểu đồ tròn trạng thái công việc"></canvas></div><div class="chart-legend">{% for key,label in [('not_started_percent','Chưa làm'),('in_progress_percent','Đang làm'),('completed_percent','Hoàn thành')] %}<span>{{ label }} <strong>{{ '%.1f'|format(summary[key]) }}%</strong></span>{% endfor %}</div>{% else %}<div class="empty-state">Chưa có dữ liệu</div>{% endif %}</section></div>
+</div>
+<script type="application/json" id="chart-data">{{ chart|tojson }}</script>
+{% endblock %}

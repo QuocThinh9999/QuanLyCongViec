@@ -1,0 +1,20 @@
+{% macro progress(value) %}
+<div class="progress-label"><span>{{ '%g'|format(value|float) }}%</span></div><div class="progress" role="progressbar" aria-label="Tiến độ" aria-valuenow="{{ value|float }}" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar {{ 'complete' if value == 100 }}" style="width: {{ value|float }}%"></div></div>
+{% endmacro %}
+{% macro delete_button(action, label, message) %}
+<form method="post" action="{{ action }}" class="d-inline" data-confirm="{{ message }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline-danger btn-sm">{{ label }}</button></form>
+{% endmacro %}
+{% macro upload_form(kind, object_id) %}
+<form action="{{ url_for('web.upload', kind=kind, object_id=object_id) }}" method="post" enctype="multipart/form-data" class="upload-form mt-3">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label class="form-label" for="file-{{ kind }}">Chọn tài liệu (tối đa 25 MB)</label>
+ <div class="d-flex flex-wrap gap-2"><input class="form-control" type="file" id="file-{{ kind }}" name="file" required><button class="btn btn-primary text-nowrap">Tải lên</button></div>
+</form>
+{% endmacro %}
+{% macro files_table(files, kind) %}
+<div class="file-list">
+{% for file in files if file.kind == kind %}
+ <div class="file-row"><div class="flex-grow-1 min-width-0"><a class="file-name" href="{{ url_for('web.download', object_id=file.id) }}">{{ file.original_filename }}</a><small class="d-block text-secondary">{{ '%.1f'|format(file.size_bytes / 1024) }} KB · {{ file.uploaded_at|time_vn }}</small></div>
+ {{ delete_button(url_for('web.attachment_delete', object_id=file.id), 'Xóa', 'Xóa tài liệu này?') if file.can_delete }}</div>
+{% else %}<p class="empty-small">Chưa có tài liệu.</p>{% endfor %}
+</div>
+{% endmacro %}

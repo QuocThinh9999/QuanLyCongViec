@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Quản lý công việc{% endblock %} · Nội bộ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  <script src="{{ url_for('static', filename='vendor/bootstrap.bundle.min.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
+</head>
+<body>
+{% if current_user %}
+<nav class="navbar navbar-expand-lg navbar-dark app-nav">
+ <div class="container-fluid px-lg-4">
+  <a class="navbar-brand" href="{{ url_for('web.index') }}"><span class="brand-mark">✓</span> Công việc <span class="brand-tag">NỘI BỘ</span></a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Mở trình đơn"><span class="navbar-toggler-icon"></span></button>
+  <div class="collapse navbar-collapse" id="navigation">
+   <div class="navbar-nav me-auto gap-lg-2 ms-lg-4">
+    {% if current_user.role in ['admin', 'director'] %}<a class="nav-link {{ 'active' if request.endpoint == 'web.dashboard' }}" href="{{ url_for('web.dashboard') }}">Tổng quan</a>{% endif %}
+    <a class="nav-link {{ 'active' if request.endpoint and 'project' in request.endpoint }}" href="{{ url_for('web.projects') }}">Dự án</a>
+    {% if current_user.role in ['admin', 'department_head'] %}<a class="nav-link" href="{{ url_for('web.task_create') }}">Tạo công việc</a><a class="nav-link" href="{{ url_for('web.membership_picker') }}">Thêm thành viên</a>{% endif %}
+    {% if current_user.role == 'admin' %}<a class="nav-link" href="{{ url_for('web.users') }}">Tài khoản</a><a class="nav-link" href="{{ url_for('web.audit') }}">Lịch sử</a>{% endif %}
+   </div>
+   <div class="user-chip"><strong>{{ current_user.full_name }}</strong><small>{{ roles[current_user.role] }}</small></div>
+   <form action="{{ url_for('web.logout') }}" method="post" class="ms-lg-3"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline-light btn-sm">Đăng xuất</button></form>
+  </div>
+ </div>
+</nav>
+{% endif %}
+<main class="{{ 'container-fluid page-shell' if current_user else 'login-shell' }}">
+ {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="alert alert-{{ category }}" role="status">{{ message }}</div>{% endfor %}{% endwith %}
+ {% block content %}{% endblock %}
+</main>
+{% if current_user %}<footer class="page-footer">Quản lý công việc nội bộ <span>Thông tin được hiển thị theo quyền truy cập của bạn.</span></footer>{% endif %}
+</body></html>

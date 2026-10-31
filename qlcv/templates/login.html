@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% block title %}Đăng nhập{% endblock %}
+{% block content %}
+<div class="login-layout">
+ <section class="login-intro"><span class="brand-mark large">✓</span><p class="eyebrow mt-4">KHÔNG GIAN LÀM VIỆC NỘI BỘ</p><h1>Công việc rõ ràng.<br>Tiến độ trong tầm tay.</h1><p>Theo dõi dự án, phối hợp công việc và chia sẻ tài liệu trong cùng một nơi.</p><div class="login-note">Dự án &nbsp; / &nbsp; Công việc &nbsp; / &nbsp; Tiến độ</div></section>
+ <section class="login-card"><p class="eyebrow">QUẢN LÝ CÔNG VIỆC</p><h2>Đăng nhập</h2><p class="text-secondary mb-4">Sử dụng tài khoản nội bộ do Admin cấp.</p>
+ {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endif %}
+ <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <div class="mb-3"><label for="username" class="form-label">Tên đăng nhập</label><input class="form-control form-control-lg" id="username" name="username" autocomplete="username" required autofocus maxlength="50"></div>
+ <div class="mb-4"><label for="password" class="form-label">Mật khẩu</label><input class="form-control form-control-lg" id="password" name="password" type="password" autocomplete="current-password" required></div>
+ <button class="btn btn-primary btn-lg w-100">Đăng nhập</button></form>
+ <p class="small text-secondary mt-4 mb-0">Liên hệ Admin nếu cần cấp tài khoản hoặc hỗ trợ đăng nhập.</p>
+ </section>
+</div>
+{% endblock %}

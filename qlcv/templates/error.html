@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block title %}Không thể thực hiện{% endblock %}
+{% block content %}<section class="error-panel"><p class="eyebrow">THÔNG BÁO · {{ code }}</p><h1>Chưa thể hoàn tất</h1><p>{{ message }}</p><a class="btn btn-primary" href="{{ url_for('web.index') if current_user else url_for('web.login') }}">{{ 'Về trang chính' if current_user else 'Đăng nhập' }}</a></section>{% endblock %}
